@@ -48,7 +48,7 @@ public class ContactListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         generetList();
-        openMenu();
+
     }
 
     @Override
@@ -58,7 +58,7 @@ public class ContactListFragment extends Fragment {
 
         inflateView(view);
         listenr(view);
-
+        openMenu();
         gridLayoutManager = new GridLayoutManager(view.getContext(), 1);
         contactsRecView.setLayoutManager(gridLayoutManager);
         concatsAdapter = new ContactsAdapter(listContacts, gridLayoutManager);

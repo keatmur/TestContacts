@@ -38,11 +38,7 @@ public class DetailedInfokFragment extends Fragment {
         return fragment;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        initToolbarWithNavigation();
-    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,6 +47,7 @@ public class DetailedInfokFragment extends Fragment {
         inflateView(view);
         contact = getArguments().getParcelable("CONTACT");
         showInf(contact);
+        initToolbarWithNavigation();
         return view;
     }
 
