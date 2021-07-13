@@ -21,7 +21,7 @@ public class CartSmailViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Contact contact) {
-        if (contact.isAcountStatus()) {
+        if (contact.isAccountStatus()) {
             status.setVisibility(View.VISIBLE);
         } else {
             status.setVisibility(View.INVISIBLE);

@@ -22,7 +22,7 @@ public class CartViewHolder extends CartSmailViewHolder {
 
     public void bind(Contact contact) {
         name.setText(contact.getName());
-        if (contact.isAcountStatus()) {
+        if (contact.isAccountStatus()) {
             status.setVisibility(View.VISIBLE);
         } else {
             status.setVisibility(View.INVISIBLE);

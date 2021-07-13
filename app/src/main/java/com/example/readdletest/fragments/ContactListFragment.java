@@ -2,7 +2,6 @@ package com.example.readdletest.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -15,15 +14,18 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.readdletest.R;
+import com.example.readdletest.contract.ContactsContract;
 import com.example.readdletest.model.Contact;
+import com.example.readdletest.presenter.ContactPresenter;
 import com.example.readdletest.util.adapter.ContactsAdapter;
 import com.example.readdletest.util.listner.ContactListner;
 import com.example.readdletest.util.listner.OnContactClickListner;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 
-public class ContactListFragment extends Fragment {
+public class ContactListFragment extends Fragment implements ContactsContract.View {
     Toolbar toolbar;
     Button changes;
     RecyclerView contactsRecView;
@@ -31,14 +33,14 @@ public class ContactListFragment extends Fragment {
     GridLayoutManager gridLayoutManager;
     ArrayList<Contact> listContacts = new ArrayList<>();
     ContactListner contactListner;
-
+    View view;
+    ContactPresenter presenter;
     OnContactClickListner clickListner = new OnContactClickListner() {
         @Override
         public void onItemClick(Contact contact) {
             contactListner.setContact(contact);
         }
     };
-
 
     public ContactListFragment() {
         // Required empty public constructor
@@ -48,22 +50,24 @@ public class ContactListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         generetList();
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_contact_list, container, false);
-
         inflateView(view);
-        listenr(view);
+        listener(view);
         openMenu();
+
         gridLayoutManager = new GridLayoutManager(view.getContext(), 1);
         contactsRecView.setLayoutManager(gridLayoutManager);
         concatsAdapter = new ContactsAdapter(listContacts, gridLayoutManager);
         concatsAdapter.setClickListner(clickListner);
         contactsRecView.setAdapter(concatsAdapter);
+
+        presenter = new ContactPresenter();
+        presenter.attachView(this);
 
         return view;
     }
@@ -74,40 +78,30 @@ public class ContactListFragment extends Fragment {
         toolbar = view.findViewById(R.id.toolbar);
     }
 
-    public void generetList() {
-        listContacts.add(new Contact("Mariya", "keatmur@gmail.com", true));
-        listContacts.add(new Contact("Max", "max@gmail.com", true));
-        listContacts.add(new Contact("Vlada", "vlada@gmail.com", false));
-        listContacts.add(new Contact("Hari", "hari@gmail.com", true));
-        listContacts.add(new Contact("Mira", "mir@gmail.com", false));
-    }
 
     public void openMenu() {
         toolbar.setTitle(getString(R.string.app_name));
-        toolbar.setOverflowIcon(ContextCompat.getDrawable(getContext(), R.drawable.ic_menu));
+        toolbar.setOverflowIcon(ContextCompat.getDrawable(Objects.requireNonNull(getContext()), R.drawable.ic_menu));
         toolbar.inflateMenu(R.menu.menu_toolbar);
-        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-                if (menuItem.getItemId() == R.id.actoin_show) {
-                    String type = changeLayoyRecicle();
-                    menuItem.setTitle("Show as " + type);
-                }
-                return true;
+        toolbar.setOnMenuItemClickListener(menuItem -> {
+            if (menuItem.getItemId() == R.id.actoin_show) {
+                String type = changeLaborRecycle();
+                menuItem.setTitle("Show as " + type);
             }
-
+            return true;
         });
     }
 
-    public void listenr(View view) {
+    public void listener(View view) {
+        this.view = view;
         changes.setOnClickListener(v -> {
-            randomChange();
+            presenter.randomChange(listContacts);
             concatsAdapter.notifyDataSetChanged();
             contactsRecView.smoothScrollToPosition(listContacts.size() - 1);
         });
     }
 
-    public String changeLayoyRecicle() {
+    public String changeLaborRecycle() {
         if (gridLayoutManager.getSpanCount() == 1) {
             gridLayoutManager.setSpanCount(5);
             concatsAdapter.notifyItemRangeChanged(0, gridLayoutManager.getSpanCount());
@@ -120,50 +114,27 @@ public class ContactListFragment extends Fragment {
 
     }
 
-    public void randomChange() {
-        int position = (int) (Math.random() * 4);
-        switch (position) {
-            case 0:
-                changeAcountStatus();
-            case 1:
-                changeName();
-            case 2:
-                dellRandomContact();
-            case 3:
-                addNewContact();
-
-        }
-    }
-
-    public void changeAcountStatus() {
-        int position = (int) (Math.random() * listContacts.size());
-        if (listContacts.get(position).isAcountStatus()) {
-
-        } else {
-            listContacts.get(position).setAcountStatus(true);
-        }
-    }
-
-    public void changeName() {
-        int position = (int) (Math.random() * listContacts.size());
-        listContacts.get(position).setName("Name" + position);
-    }
-
-    public void addNewContact() {
-        int position = listContacts.size();
-        listContacts.add(new Contact("Name" + position, "name@gmail.com", false));
-    }
-
-    public void dellRandomContact() {
-        int position = (int) (Math.random() * listContacts.size());
-        listContacts.remove(position);
-    }
-
     public ContactListner getContactListner() {
         return contactListner;
     }
 
     public void setContactListner(ContactListner contactListner) {
         this.contactListner = contactListner;
+    }
+
+    public void generetList() {
+        listContacts.add(new Contact("Mariya", "keatmur@gmail.com", true));
+        listContacts.add(new Contact("Max", "max@gmail.com", true));
+        listContacts.add(new Contact("Vlada", "vlada@gmail.com", false));
+        listContacts.add(new Contact("Hari", "hari@gmail.com", true));
+        listContacts.add(new Contact("Mira", "mir@gmail.com", false));
+
+    }
+
+    @Override
+    public void showContactList(ArrayList<Contact> contacts) {
+        listContacts.clear();
+        listContacts.addAll(contacts);
+        concatsAdapter.notifyDataSetChanged();
     }
 }

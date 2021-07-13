@@ -2,7 +2,7 @@ package com.example.readdletest.fragments;
 
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
+
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -16,6 +16,8 @@ import androidx.appcompat.widget.Toolbar;
 import com.bumptech.glide.Glide;
 import com.example.readdletest.R;
 import com.example.readdletest.model.Contact;
+
+import java.util.Objects;
 
 
 public class DetailedInfokFragment extends Fragment {
@@ -45,7 +47,7 @@ public class DetailedInfokFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detailed_infok, container, false);
         inflateView(view);
-        contact = getArguments().getParcelable("CONTACT");
+        contact = Objects.requireNonNull(getArguments()).getParcelable("CONTACT");
         showInf(contact);
         initToolbarWithNavigation();
         return view;
@@ -72,10 +74,10 @@ public class DetailedInfokFragment extends Fragment {
     public void showInf(Contact contact) {
         name.setText(contact.getName());
         email.setText(contact.getEmail());
-        if (contact.isAcountStatus()) {
-            status.setText("Online");
+        if (contact.isAccountStatus()) {
+            status.setText(R.string.online);
         } else {
-            status.setText("Offline");
+            status.setText(R.string.offline);
         }
         Glide.with(avatar).load(contact.getUrlBigAvatar()).into(avatar);
     }

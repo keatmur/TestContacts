@@ -11,12 +11,12 @@ import com.example.readdletest.util.MD5Util;
 public class Contact implements Parcelable {
     String name;
     String email;
-    boolean acountStatus;
+    boolean accountStatus;
 
     public Contact(String name, String email, boolean acountStatus) {
         this.name = name;
         this.email = email;
-        this.acountStatus = acountStatus;
+        this.accountStatus = acountStatus;
     }
 
     public Contact() {
@@ -25,7 +25,7 @@ public class Contact implements Parcelable {
     protected Contact(Parcel in) {
         name = in.readString();
         email = in.readString();
-        acountStatus = in.readByte() != 0;
+        accountStatus = in.readByte() != 0;
     }
 
     public static final Creator<Contact> CREATOR = new Creator<Contact>() {
@@ -56,24 +56,22 @@ public class Contact implements Parcelable {
         this.email = email;
     }
 
-    public boolean isAcountStatus() {
-        return acountStatus;
+    public boolean isAccountStatus() {
+        return accountStatus;
     }
 
-    public void setAcountStatus(boolean acountStatus) {
-        this.acountStatus = acountStatus;
+    public void setAccountStatus(boolean accountStatus) {
+        this.accountStatus = accountStatus;
     }
 
     public String getUrlBigAvatar() {
         String hash = MD5Util.md5Hex(email);
-        String gravatarUrl = "https://www.gravatar.com/avatar/" + hash + "?s=200&d=retro";
-        return gravatarUrl;
+        return "https://www.gravatar.com/avatar/" + hash + "?s=200&d=retro";
     }
 
     public String getUrlAvatar() {
         String hash = MD5Util.md5Hex(email);
-        String gravatarUrl = "https://www.gravatar.com/avatar/" + hash + "?s=48&d=retro";
-        return gravatarUrl;
+        return "https://www.gravatar.com/avatar/" + hash + "?s=48&d=retro";
     }
 
 
@@ -82,14 +80,14 @@ public class Contact implements Parcelable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Contact contact = (Contact) o;
-        return acountStatus == contact.acountStatus &&
+        return accountStatus == contact.accountStatus &&
                 Objects.equals(name, contact.name) &&
                 Objects.equals(email, contact.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, email, acountStatus);
+        return Objects.hash(name, email, accountStatus);
     }
 
     @Override
@@ -101,6 +99,6 @@ public class Contact implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
         dest.writeString(email);
-        dest.writeByte((byte) (acountStatus ? 1 : 0));
+        dest.writeByte((byte) (accountStatus ? 1 : 0));
     }
 }
